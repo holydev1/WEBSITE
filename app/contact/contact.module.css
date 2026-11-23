@@ -1,0 +1,18 @@
+.links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem clamp(1rem, 3vw, 2rem);
+  margin: 0;
+  padding: 1rem 0 0;
+  border-block-start: 1px solid var(--rule);
+  background: var(--edge-grain);
+  list-style: none;
+}
+
+.links a {
+  display: flex;
+  align-items: center;
+  min-block-size: 2.75rem;
+  color: var(--accent);
+  font-weight: 600;
+}

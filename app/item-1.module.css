@@ -1,0 +1,64 @@
+.item {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.875rem;
+  padding: clamp(1.5rem, 5vw, 3.5rem);
+  border: 1px solid var(--rule);
+  border-block-start-color: transparent;
+  border-inline-start: 2px solid var(--accent);
+  background: var(--edge-grain), var(--surface);
+  scroll-margin-block-start: 1.5rem;
+}
+
+.item::before {
+  position: absolute;
+  inset-inline: 0;
+  inset-block-start: calc(var(--section-divider-height) / -2);
+  block-size: var(--section-divider-height);
+  background: var(--section-divider);
+  image-rendering: pixelated;
+  pointer-events: none;
+  content: '';
+}
+
+.item h2 {
+  font-size: var(--section-title-size);
+}
+
+.item p {
+  max-inline-size: 55ch;
+  color: var(--muted);
+  font-size: var(--lead-size);
+}
+
+.item ul {
+  max-inline-size: 60ch;
+  margin: 0;
+  padding-inline-start: 1.25rem;
+  color: var(--muted);
+}
+
+.item li + li {
+  margin-block-start: 0.4rem;
+}
+
+.item a {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.item img,
+.item video {
+  display: block;
+  max-inline-size: 100%;
+  block-size: auto;
+}
+
+.item video {
+  inline-size: 100%;
+}
+
+.item h2:not(:first-child) {
+  margin-block-start: 0.75rem;
+}

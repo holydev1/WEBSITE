@@ -1,0 +1,7 @@
+/node_modules/
+/.next/
+/out/
+/.npm-cache/
+/next-env.d.ts
+*.tsbuildinfo
+/work

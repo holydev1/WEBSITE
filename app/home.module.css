@@ -1,0 +1,185 @@
+.intro {
+  padding-block: clamp(2.75rem, 6.5vw, 5.5rem);
+}
+
+.intro h1 {
+  font-size: clamp(2rem, 1rem + 5.5vw, 5.5rem);
+  line-height: 1;
+  text-wrap: balance;
+}
+
+.introCopy {
+  display: grid;
+  margin-block-start: clamp(0.75rem, 2.5vw, 1.75rem);
+}
+
+.intro p {
+  max-inline-size: 48ch;
+  color: var(--muted);
+  font-size: var(--lead-size);
+}
+
+.intro .links {
+  margin-block-start: 0.75rem;
+}
+
+.featured {
+  position: relative;
+  display: grid;
+  grid-template-areas: 'copy' 'preview';
+  align-items: center;
+  gap: clamp(1.25rem, 4vw, 3.5rem);
+  padding-block: var(--section-space);
+}
+
+.featuredCopy {
+  grid-area: copy;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.featured h3 {
+  font-size: clamp(1.25rem, 1rem + 0.7vw, 1.75rem);
+}
+
+.featuredCopy p {
+  max-inline-size: 42ch;
+  color: var(--muted);
+}
+
+.projectPreview {
+  grid-area: preview;
+  display: grid;
+  align-content: center;
+  gap: 0.5rem;
+  padding: clamp(1.5rem, 4vw, 3rem);
+}
+
+.projectPreview p + p,
+.coop p {
+  color: var(--muted);
+}
+
+.coop {
+  position: relative;
+  padding-block: var(--section-space);
+}
+
+.coop p {
+  max-inline-size: 60ch;
+  margin-block: 0.75rem 0.5rem;
+}
+
+.destinations {
+  --column-inset: clamp(1.5rem, 4vw, 3.25rem);
+  position: relative;
+  display: grid;
+}
+
+.featured::before,
+.coop::before,
+.destinations::before,
+.destinations::after {
+  position: absolute;
+  inset-inline: 0;
+  block-size: var(--section-divider-height);
+  background: var(--section-divider);
+  image-rendering: pixelated;
+  pointer-events: none;
+  content: '';
+}
+
+.featured::before,
+.coop::before,
+.destinations::before {
+  inset-block-start: calc(var(--section-divider-height) / -2);
+}
+
+.destinations::after {
+  inset-block-end: calc(var(--section-divider-height) / -2);
+}
+
+.destinations section {
+  display: flex;
+  flex-direction: column;
+  padding-block: clamp(1.5rem, 4vw, 2.75rem);
+}
+
+.destinations section + section {
+  position: relative;
+}
+
+.destinations section + section::before {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-start: 50%;
+  inline-size: min(100%, 20rem);
+  block-size: 2rem;
+  background: url('/illustrations/dividers/jump-rope.png') center / 100% 8rem no-repeat;
+  image-rendering: pixelated;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  content: '';
+}
+
+.featured h2,
+.coop h2,
+.destinations h2 {
+  font-size: var(--section-title-size);
+}
+
+.destinations p {
+  max-inline-size: 42ch;
+  margin-block: 0.625rem 1rem;
+  color: var(--muted);
+}
+
+.links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem clamp(1rem, 3vw, 2rem);
+  margin-block-start: auto;
+}
+
+.links a {
+  display: flex;
+  align-items: center;
+  min-block-size: 2.75rem;
+  padding-block: 0.375rem;
+  color: var(--accent);
+  font-family: var(--sans);
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.links a:hover {
+  color: var(--text);
+}
+
+@media (min-width: 40rem) {
+  .destinations {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .destinations section:first-child {
+    padding-inline-end: var(--column-inset);
+  }
+
+  .destinations section + section {
+    padding-inline-start: var(--column-inset);
+  }
+
+  .destinations section + section::before {
+    inset-block-start: 50%;
+    inset-inline-start: 0;
+    inline-size: clamp(8rem, 16vw, 11rem);
+    transform: translate(-50%, -50%) rotate(-90deg);
+  }
+}
+
+@media (min-width: 48rem) {
+  .featured {
+    grid-template-areas: 'preview copy';
+    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+  }
+}

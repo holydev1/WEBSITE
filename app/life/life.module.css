@@ -1,0 +1,16 @@
+.lifeSection {
+  padding-block: 1.25rem;
+  border-block-start: 1px solid var(--rule);
+  background: var(--edge-grain);
+}
+
+.lifeSection h2 {
+  font-size: clamp(1.375rem, 1.1rem + 1vw, 2.25rem);
+}
+
+.lifeSection p {
+  max-inline-size: 55ch;
+  margin-block-start: 0.625rem;
+  color: var(--muted);
+}
+
