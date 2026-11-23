@@ -13,9 +13,13 @@
   pointer-events: none;
 }
 
+.disclosure {
+  inline-size: 100%;
+}
+
 /* Reserve space for the complete wheel where it would cover the page title. */
-.nav[data-expanded='true'] {
-  padding-block-end: calc(var(--wheel-radius) - var(--hub-size) / 2 + 0.75rem);
+.disclosure[open] {
+  padding-block-end: calc(var(--wheel-radius) - var(--hub-size) / 2 + 0.125rem);
 }
 
 .trigger {
@@ -26,6 +30,7 @@
   justify-items: center;
   inline-size: var(--hub-size);
   block-size: var(--hub-size);
+  margin-inline-start: auto;
   padding: 0 0 0.38rem;
   border: 1px solid var(--rule);
   border-radius: 50%;
@@ -35,11 +40,16 @@
   font: 600 0.875rem / 1.1 var(--sans);
   letter-spacing: 0.025em;
   cursor: pointer;
+  list-style: none;
   pointer-events: auto;
 }
 
+.trigger::-webkit-details-marker {
+  display: none;
+}
+
 .trigger:hover,
-.trigger[aria-expanded='true'] {
+.disclosure[open] .trigger {
   border-color: var(--accent);
   color: var(--accent);
 }
@@ -157,14 +167,9 @@
   outline-offset: 2px;
 }
 
-@media (width < 48rem), (height < 24rem), (hover: none), (pointer: coarse) {
-  .nav {
-    row-gap: 0.625rem;
-    pointer-events: auto;
-  }
-
-  .nav[data-expanded='true'] {
-    padding-block-end: 0.875rem;
+@media (width < 48rem), (height < 24rem), (width < 64rem) and (any-hover: none) {
+  .disclosure[open] {
+    padding-block-end: 0.25rem;
   }
 
   .panel {
@@ -172,6 +177,8 @@
     inline-size: min(100%, 20rem);
     aspect-ratio: auto;
     overflow: visible;
+    margin-block-start: 0.625rem;
+    margin-inline-start: auto;
     padding: 0.25rem;
     border-color: var(--rule);
     border-radius: 0;
@@ -179,7 +186,7 @@
     animation: none;
   }
 
-  .panel:not([hidden]) {
+  .disclosure[open] .panel {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 0.25rem;
@@ -209,13 +216,13 @@
   }
 }
 
-@media (min-width: 75rem) and (min-height: 28rem) and (hover: hover) and (pointer: fine) {
+@media (min-width: 75rem) and (min-height: 28rem) {
   .nav {
     --wheel-limit: 19rem;
   }
 
-  .nav[data-expanded='true'] {
-    padding-block-end: var(--nav-inset);
+  .disclosure[open] {
+    padding-block-end: 0;
   }
 }
 

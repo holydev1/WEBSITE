@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import Illustration, { type IllustrationName } from './illustration';
 import styles from './navigation.module.css';
 
@@ -14,37 +14,39 @@ const destinations: { label: string; href: string; illustration: IllustrationNam
   { label: 'Contact', href: '/contact', illustration: 'contact' },
 ];
 
-type MenuState = 'closed' | 'preview' | 'open';
-
-// Small screens open the wheel through the button to avoid incidental previews.
-const hoverLayout = '(min-width: 48rem) and (min-height: 24rem) and (hover: hover) and (pointer: fine)';
-
 export default function Navigation() {
   const pathname = usePathname();
-  const [menuState, setMenuState] = useState<MenuState>('closed');
   const nav = useRef<HTMLElement>(null);
-  const trigger = useRef<HTMLButtonElement>(null);
-  const expanded = menuState !== 'closed';
+  const disclosure = useRef<HTMLDetailsElement>(null);
+  const trigger = useRef<HTMLElement>(null);
+  const preview = useRef(false);
+  const previousPath = useRef(pathname);
+
+  const close = useCallback(() => {
+    if (disclosure.current) disclosure.current.open = false;
+    preview.current = false;
+  }, []);
 
   useEffect(() => {
-    setMenuState('closed');
-  }, [pathname]);
+    if (previousPath.current !== pathname) {
+      previousPath.current = pathname;
+      close();
+    }
+  }, [close, pathname]);
 
   useEffect(() => {
-    if (!expanded) return;
-
     function dismissOnOutsidePress(event: PointerEvent) {
-      if (event.target instanceof Node && !nav.current?.contains(event.target)) {
-        setMenuState('closed');
+      if (disclosure.current?.open && event.target instanceof Node && !nav.current?.contains(event.target)) {
+        close();
       }
     }
 
     function dismissOnEscape(event: KeyboardEvent) {
-      if (event.key !== 'Escape' || event.defaultPrevented) return;
+      if (event.key !== 'Escape' || event.defaultPrevented || !disclosure.current?.open) return;
 
       event.preventDefault();
       if (nav.current?.contains(document.activeElement)) trigger.current?.focus();
-      setMenuState('closed');
+      close();
     }
 
     document.addEventListener('pointerdown', dismissOnOutsidePress);
@@ -53,66 +55,72 @@ export default function Navigation() {
       document.removeEventListener('pointerdown', dismissOnOutsidePress);
       document.removeEventListener('keydown', dismissOnEscape);
     };
-  }, [expanded]);
+  }, [close]);
 
   return (
     <nav
       ref={nav}
       className={styles.nav}
-      data-expanded={expanded}
       aria-label="Main navigation"
       onPointerLeave={() => {
-        if (menuState === 'preview' && !nav.current?.contains(document.activeElement)) {
-          setMenuState('closed');
+        if (preview.current && !nav.current?.contains(document.activeElement)) {
+          close();
         }
       }}
       onBlur={(event) => {
         // A touch can blur the button without transferring focus to the tapped link.
         if (event.relatedTarget && !event.currentTarget.contains(event.relatedTarget)) {
-          setMenuState('closed');
+          close();
         }
       }}
     >
-      <button
-        ref={trigger}
-        className={styles.trigger}
-        type="button"
-        aria-controls="site-navigation-links"
-        aria-expanded={expanded}
-        onPointerEnter={(event) => {
-          if (event.pointerType === 'mouse' && window.matchMedia(hoverLayout).matches) {
-            setMenuState((state) => state === 'closed' ? 'preview' : state);
-          }
-        }}
-        onClick={() => setMenuState((state) => state === 'open' ? 'closed' : 'open')}
-      >
-        <span className={styles.triggerLabel}>Menu</span>
-      </button>
+      <details ref={disclosure} className={styles.disclosure}>
+        <summary
+          ref={trigger}
+          className={styles.trigger}
+          onPointerEnter={(event) => {
+            const menu = disclosure.current;
+            // A trackpad or mouse can send pointer events on a touch-first device.
+            if (menu && !menu.open && event.pointerType === 'mouse') {
+              preview.current = true;
+              menu.open = true;
+            }
+          }}
+          onClick={(event) => {
+            if (preview.current) {
+              event.preventDefault();
+              preview.current = false;
+            }
+          }}
+        >
+          <span className={styles.triggerLabel}>Menu</span>
+        </summary>
 
-      <ul id="site-navigation-links" className={styles.panel} hidden={!expanded}>
-        {destinations.map(({ label, href, illustration }) => {
-          const current = pathname === href;
+        <ul className={styles.panel}>
+          {destinations.map(({ label, href, illustration }) => {
+            const current = pathname === href;
 
-          return (
-            <li key={href}>
-              <Link
-                href={href}
-                className={styles.link}
-                aria-current={current ? 'page' : undefined}
-                onNavigate={() => {
-                  if (current) trigger.current?.focus();
-                  setMenuState('closed');
-                }}
-              >
-                <span className={styles.linkContent}>
-                  <Illustration name={illustration} />
-                  <span className={styles.linkLabel}>{label}</span>
-                </span>
-              </Link>
-            </li>
-          );
-        })}
-      </ul>
+            return (
+              <li key={href}>
+                <Link
+                  href={href}
+                  className={styles.link}
+                  aria-current={current ? 'page' : undefined}
+                  onNavigate={() => {
+                    if (current) trigger.current?.focus();
+                    close();
+                  }}
+                >
+                  <span className={styles.linkContent}>
+                    <Illustration name={illustration} />
+                    <span className={styles.linkLabel}>{label}</span>
+                  </span>
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
+      </details>
     </nav>
   );
 }
